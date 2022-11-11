@@ -1,11 +1,6 @@
-from flask import Flask
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-app.debug = True
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+db = SQLAlchemy()
 
 
 class Dealer (db.Model):
@@ -20,6 +15,9 @@ class Dealer (db.Model):
 
     def dealerdict(self):
         return {'name': self.name, 'city': self.city}
+    
+    def __repr__(self):
+        return f"<{self.id}, {self.name}, {self.city}>"
 
 
 skodadealers_cars = db.Table("skodadealers_cars",
@@ -44,6 +42,5 @@ class Car (db.Model):
     def cardict(self):
         return {'equipment': self.equipment, 'model': self.model, 'price': self.price}
 
-
-if __name__ == '__main__':
-    app.run()
+    def __repr__(self):
+        return f"<{self.id}, {self.equipment}, {self.model}, {self.price}>"
