@@ -6,8 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.debug = True
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://igar:o960xa@127.0.0.1/dbigar'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://igar:o960xa@postgres/dbigar'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://igar:o960xa@127.0.0.1/dbigar'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://igar:o960xa@postgres/dbigar'
 
 db = SQLAlchemy()
 
@@ -18,7 +18,7 @@ db.init_app(app)
 def create_table():
     db.create_all()
     
-class Dealer (db.Model):
+class Dealer(db.Model):
     __tablename__ = 'skoda_dealers'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(100))
@@ -41,7 +41,7 @@ skodadealers_cars = db.Table("skodadealers_cars",
     )
 
 
-class Car (db.Model):
+class Car(db.Model):
     __tablename__ = 'skoda_cars'
     id = db.Column(db.Integer(), primary_key=True)
     equipment = db.Column(db.String(100))
@@ -54,7 +54,8 @@ class Car (db.Model):
         self.model = model
         self.price = price
 
-    def cardict(self):
+    def get_dict(self):
+        # get_dict
         return {'equipment': self.equipment, 'model': self.model, 'price': self.price}
 
     def __repr__(self):
@@ -73,14 +74,14 @@ class DealersView(Resource):
     def get(self):
         all_dealers=Dealer.query.all()
         if all_dealers:
-            return {'All dealers':list(x.dealerdict() for x in all_dealers)}
+            return {'All dealers':[x.dealerdict() for x in all_dealers]}
         return {'message':'Dealers not found'}
     
 class CarsView(Resource):
     
     def post(self):
         data = request.get_json()
-        all_dealers=Dealer.query.all()
+        # all_dealers=Dealer.query.all()
         dealers_city = Dealer.query.filter_by(city=data['city']).all()
         # dealers_city = Dealer.query.filter_by(city=data['city'] or name=data['sss']).all()
         new_car = Car(data['equipment'], data['model'], data['price'])
@@ -89,11 +90,11 @@ class CarsView(Resource):
             db.session.add(x)
             db.session.commit()
         dealers_newcar=new_car.dealers
-        return  {'New car':new_car.cardict(), 'Dealers':list(y.dealerdict() for y in dealers_newcar)}, 201
+        return  {'New car':new_car.get_dict(), 'Dealers':list(y.dealerdict() for y in dealers_newcar)}, 201
     
     def get(self):
         all_cars = Car.query.all()
-        return {'All cars':list(x.cardict() for x in all_cars)}
+        return {'All cars':list(x.get_dict() for x in all_cars)}
 
 
 class DealerView(Resource):
@@ -102,7 +103,7 @@ class DealerView(Resource):
         dealer = Dealer.query.filter_by(name=name).first()
         if dealer:
             cars = dealer.cars
-            return {f'Dealer {name}':dealer.dealerdict(), 'Cars':list(x.cardict() for x in cars)}
+            return {f'Dealer {name}':dealer.dealerdict(), 'Cars':list(x.get_dict() for x in cars)}
         
         return {'message':'Dealer not found'}, 404
     
@@ -115,7 +116,7 @@ class DealerView(Resource):
             db.session.commit()
             return {'Update Dealer':dealer.dealerdict()}
         else:
-            dealer=Dealer(name=name, city=data['city']) 
+            dealer = Dealer(name=name, city=data['city']) 
         
         db.session.add(dealer)
         db.session.commit()
@@ -137,7 +138,7 @@ class CarView(Resource):
         car = Car.query.filter_by(model=model).first()
         if car:
             dealers = car.dealers
-            return {f'Car {model}':car.cardict(), 'Dealers':list(x.dealerdict() for x in dealers)}
+            return {f'Car {model}':car.get_dict(), 'Dealers':list(x.dealerdict() for x in dealers)}
     
         return {'Message': 'Car not found'}, 404
      
@@ -155,10 +156,10 @@ class CarView(Resource):
                  x.cars.append(car)
                  db.session.add(x)
                  db.session.commit()
-                 return {'New Car':car.cardict(), 'Dealers':list(y.dealerdict() for y in dealers)}, 201    
+                 return {'New Car':car.get_dict(), 'Dealers':list(y.dealerdict() for y in dealers)}, 201    
         
         db.session.commit()
-        return {'Update Car':car.cardict()}
+        return {'Update Car':car.get_dict()}
         
     def delete(self, model):
         car = Car.query.filter_by(model=model).first()
