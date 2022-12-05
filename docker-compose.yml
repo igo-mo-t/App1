@@ -23,6 +23,7 @@ services:
       - 5000:5000
     volumes:
       - .:/app
+      - ./migrations:/app/migrations
     depends_on:
       - postgres
     # entrypoint: ["python","app.py"]  
