@@ -5,10 +5,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 app = Flask(__name__)
-app.debug = True
+# app.debug = True
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://igar:o960xa@127.0.0.1/dbigar'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://igar:o960xa@postgres/dbigar'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://igar:o960xa@127.0.0.1:5433/dbigar'
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -208,5 +209,5 @@ api.add_resource(DealerView, '/dealer/<string:name>')
 api.add_resource(CarView, '/car/<string:model>')
         
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)         
+    app.run(host="0.0.0.0", port=5000, debug=True)         
     

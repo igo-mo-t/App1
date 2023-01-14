@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.10-buster
 RUN mkdir /app
 WORKDIR /app
 COPY . /app
