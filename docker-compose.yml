@@ -12,8 +12,8 @@ services:
       # - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - ./postgres-data/postgres:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    # ports:
+      # - "5432:5432"
   app:
     restart: always
     build: .
@@ -27,3 +27,8 @@ services:
     depends_on:
       - postgres
     # entrypoint: ["python","app.py"]  
+
+  adminer:
+    image: adminer:latest
+    ports:
+    - "8080:8080"

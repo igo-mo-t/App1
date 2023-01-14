@@ -1,0 +1,7 @@
+env/
+env2/
+__pycache__/
+postgres-data/postgres/
+postgres-data/
+db.yml
+.env
